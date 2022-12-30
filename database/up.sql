@@ -1,0 +1,7 @@
+DROP TABLE IF EXISTS food;
+
+CREATE TABLE food (
+    id SERIAL PRIMARY KEY NOT NULL,
+    name VARCHAR(32) NOT NULL,
+    price FLOAT NOT NULL 
+);
