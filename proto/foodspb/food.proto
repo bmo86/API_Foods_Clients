@@ -1,0 +1,75 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+
+package food;
+
+option go_package = "proto/foodspb";
+
+message Ingredients {
+    string name = 1;
+    int64 IDfood = 2;
+    bool status = 3;
+}
+
+message IngredientsOnlyName {
+    string name = 1;
+}
+
+message CreatedFoodRequest {
+    string name = 1; 
+    float price = 2; 
+    google.protobuf.Timestamp createdAt = 3;
+    google.protobuf.Timestamp updateAt = 4;
+}
+
+message Food {
+    int64 id = 1;
+    string name = 2;
+    float price = 3;
+    repeated IngredientsOnlyName ingredients = 4;
+    google.protobuf.Timestamp createdAt = 5;
+    google.protobuf.Timestamp updateAt = 6;
+    bool status = 7;
+}
+
+message FoodUpdateRequest {
+    int64 id = 1;
+    string name = 2;
+    float price = 3;
+}
+
+message FoodWithoutIngredients {
+    int64 id = 1;
+    string name = 2;
+    float price = 3;
+    google.protobuf.Timestamp createdAt = 4;
+    google.protobuf.Timestamp updateAt = 5;
+    bool status = 6;
+}
+
+message FoodRequest {
+    int64 id = 1;
+}
+
+message GetFoodsRequest {
+    int64 page = 1;
+}
+
+message FoodResponse { Food food = 1; }
+
+message FoodsResponse {
+    repeated Food foods = 1;
+}
+
+message FoodDeleteResponse {
+    bool success = 1;
+}
+
+service FoodService {
+    rpc CreatedFood(CreatedFoodRequest) returns (FoodResponse);
+    rpc GetFood(FoodRequest) returns (FoodResponse);
+    rpc GetFoods(GetFoodsRequest) returns (FoodsResponse);
+    rpc UpdateFood(FoodUpdateRequest) returns (FoodResponse);
+    rpc DeleteFood(FoodRequest) returns (FoodDeleteResponse);
+} 

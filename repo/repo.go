@@ -5,9 +5,10 @@ import "foods_API_GRPC/models"
 type RepoDatabase interface {
 	CretedFood(food *models.Food) error
 	GetFood(id int64) (*models.Food, error)
-	GetFoods() ([]*models.Food, error)
+	GetFoods(page int64) ([]*models.Food, error)
 	UpdateFood(id int64, food models.Food) (bool, error)
 	DeleteFood(id int64) (bool, error)
+	InsertIngredients(in []*models.Ingredients) error
 }
 
 var repository RepoDatabase
@@ -24,8 +25,8 @@ func GetFood(id int64) (*models.Food, error) {
 	return repository.GetFood(id)
 }
 
-func GetFoods() ([]*models.Food, error) {
-	return repository.GetFoods()
+func GetFoods(page int64) ([]*models.Food, error) {
+	return repository.GetFoods(page)
 }
 
 func UpdateFood(id int64, food models.Food) (bool, error) {
@@ -34,4 +35,10 @@ func UpdateFood(id int64, food models.Food) (bool, error) {
 
 func DeleteFood(id int64) (bool, error) {
 	return repository.DeleteFood(id)
+}
+
+//ingredients
+
+func InsertIngredients(in []*models.Ingredients) error {
+	return repository.InsertIngredients(in)
 }

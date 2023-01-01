@@ -5,7 +5,32 @@ import (
 )
 
 func (i *instacePostgres) CretedFood(food *models.Food) error {
-	err := i.db.Create(&food)
+	f := models.FoodWithoutIngredients{
+		Name:      food.Name,
+		Price:     food.Price,
+		CreatedAt: food.CreatedAt,
+		UpdateAt:  food.UpdatedAt,
+		Status:    food.Status,
+	}
+
+	err := i.db.Create(&f)
+
+	if err.Error == nil {
+		var ingredients []*models.Ingredients
+
+		for _, ingredient := range food.Ingredients {
+			i := models.Ingredients{
+				Name:   ingredient,
+				IDFood: int64(f.ID),
+			}
+
+			ingredients = append(ingredients, &i)
+		}
+
+		err := i.InsertIngredients(ingredients)
+		return err
+	}
+
 	return err.Error
 }
 
@@ -33,8 +58,8 @@ func (i *instacePostgres) GetFood(id int64) (*models.Food, error) {
 	return &food, nil
 }
 
-func (i *instacePostgres) GetFoods() ([]*models.Food, error) {
-	rows, err := i.db.Raw("SELECT id, name, price FROM food").Rows()
+func (i *instacePostgres) GetFoods(page int64) ([]*models.Food, error) {
+	rows, err := i.db.Raw("SELECT id, name, price FROM food LIMIT = ? OFFSET = ?", page, page*3).Rows()
 	if err != nil {
 		return nil, err
 	}
@@ -73,4 +98,11 @@ func (i *instacePostgres) DeleteFood(id int64) (bool, error) {
 		return false, nil
 	}
 	return true, nil
+}
+
+//ingredients
+
+func (i *instacePostgres) InsertIngredients(in []*models.Ingredients) error {
+	err := i.db.Create(&in)
+	return err.Error
 }
