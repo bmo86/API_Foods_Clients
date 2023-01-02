@@ -1,10 +1,11 @@
 package database
 
 import (
+	"context"
 	"foods_API_GRPC/models"
 )
 
-func (i *instacePostgres) CretedFood(food *models.Food) error {
+func (i *instacePostgres) CretedFood(ctx context.Context, food *models.Food) error {
 	f := models.FoodWithoutIngredients{
 		Name:      food.Name,
 		Price:     food.Price,
@@ -27,14 +28,14 @@ func (i *instacePostgres) CretedFood(food *models.Food) error {
 			ingredients = append(ingredients, &i)
 		}
 
-		err := i.InsertIngredients(ingredients)
+		err := i.InsertIngredients(ctx, ingredients)
 		return err
 	}
 
 	return err.Error
 }
 
-func (i *instacePostgres) GetFood(id int64) (*models.Food, error) {
+func (i *instacePostgres) GetFood(ctx context.Context, id int64) (*models.Food, error) {
 
 	rows, err := i.db.Raw("SELECT id, name, price FROM food WHERE id = ? ", id).Rows()
 	if err != nil {
@@ -58,7 +59,7 @@ func (i *instacePostgres) GetFood(id int64) (*models.Food, error) {
 	return &food, nil
 }
 
-func (i *instacePostgres) GetFoods(page int64) ([]*models.Food, error) {
+func (i *instacePostgres) GetFoods(ctx context.Context, page int64) ([]*models.Food, error) {
 	rows, err := i.db.Raw("SELECT id, name, price FROM food LIMIT = ? OFFSET = ?", page, page*3).Rows()
 	if err != nil {
 		return nil, err
@@ -82,7 +83,7 @@ func (i *instacePostgres) GetFoods(page int64) ([]*models.Food, error) {
 	return foods, nil
 }
 
-func (i *instacePostgres) UpdateFood(id int64, food *models.FoodUpdate) (bool, error) {
+func (i *instacePostgres) UpdateFood(ctx context.Context, id int64, food models.FoodUpdate) (bool, error) {
 	err := i.db.Exec("UPDATE food SET name = ?, price = ? WHERE id = ?", food.Name, food.Price, id)
 
 	if err.Error != nil {
@@ -92,7 +93,7 @@ func (i *instacePostgres) UpdateFood(id int64, food *models.FoodUpdate) (bool, e
 	return true, nil
 }
 
-func (i *instacePostgres) DeleteFood(id int64) (bool, error) {
+func (i *instacePostgres) DeleteFood(ctx context.Context, id int64) (bool, error) {
 	var f = models.Food{}
 	if err := i.db.Delete(&f, id).Error; err != nil {
 		return false, nil
@@ -102,7 +103,7 @@ func (i *instacePostgres) DeleteFood(id int64) (bool, error) {
 
 //ingredients
 
-func (i *instacePostgres) InsertIngredients(in []*models.Ingredients) error {
+func (i *instacePostgres) InsertIngredients(ctx context.Context, in []*models.Ingredients) error {
 	err := i.db.Create(&in)
 	return err.Error
 }

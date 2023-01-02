@@ -1,6 +1,7 @@
 package serverpb
 
 import (
+	"context"
 	"foods_API_GRPC/models"
 	"foods_API_GRPC/proto/foodspb"
 	"foods_API_GRPC/repo"
@@ -17,7 +18,7 @@ func NewServerpb(repo repo.RepoDatabase) *Servepb {
 	return &Servepb{repo: repo}
 }
 
-func (s *Servepb) CreateFood(req *foodspb.CreatedFoodRequest) (*foodspb.FoodResponse, error) {
+func (s *Servepb) CreateFood(ctx context.Context, req *foodspb.CreatedFoodRequest) (*foodspb.FoodResponse, error) {
 
 	t := timestamppb.Now()
 
@@ -30,7 +31,7 @@ func (s *Servepb) CreateFood(req *foodspb.CreatedFoodRequest) (*foodspb.FoodResp
 		Status:      true,
 	}
 
-	if err := s.repo.CretedFood(food); err != nil {
+	if err := s.repo.CretedFood(ctx, food); err != nil {
 		return nil, err
 	}
 
@@ -47,8 +48,8 @@ func (s *Servepb) CreateFood(req *foodspb.CreatedFoodRequest) (*foodspb.FoodResp
 	}, nil
 }
 
-func (s *Servepb) GetFood(req *foodspb.FoodRequest) (*foodspb.FoodResponse, error) {
-	food, err := s.repo.GetFood(req.GetId())
+func (s *Servepb) GetFood(ctx context.Context, req *foodspb.FoodRequest) (*foodspb.FoodResponse, error) {
+	food, err := s.repo.GetFood(ctx, req.GetId())
 	if err != nil {
 		return nil, err
 	}
@@ -66,8 +67,8 @@ func (s *Servepb) GetFood(req *foodspb.FoodRequest) (*foodspb.FoodResponse, erro
 	}, nil
 }
 
-func (s *Servepb) GetFoods(req *foodspb.GetFoodsRequest) (*foodspb.FoodsResponse, error) {
-	foods, err := s.repo.GetFoods(req.GetPage())
+func (s *Servepb) GetFoods(ctx context.Context, req *foodspb.GetFoodsRequest) (*foodspb.FoodsResponse, error) {
+	foods, err := s.repo.GetFoods(ctx, req.GetPage())
 	if err != nil {
 		return nil, err
 	}
@@ -92,13 +93,13 @@ func (s *Servepb) GetFoods(req *foodspb.GetFoodsRequest) (*foodspb.FoodsResponse
 	}, nil
 }
 
-func (s *Servepb) UpdateFood(req *foodspb.FoodUpdateRequest) (*foodspb.MessageResponse, error) {
+func (s *Servepb) UpdateFood(ctx context.Context, req *foodspb.FoodUpdateRequest) (*foodspb.MessageResponse, error) {
 	food := models.FoodUpdate{
 		Name:     req.GetName(),
 		Price:    float64(req.GetPrice()),
 		UpdateAt: timestamppb.Now(),
 	}
-	res, err := s.repo.UpdateFood(req.GetId(), food)
+	res, err := s.repo.UpdateFood(ctx, req.GetId(), food)
 	if err != nil {
 		return &foodspb.MessageResponse{
 			Success: res,
@@ -110,8 +111,8 @@ func (s *Servepb) UpdateFood(req *foodspb.FoodUpdateRequest) (*foodspb.MessageRe
 	}, nil
 }
 
-func (s *Servepb) DeleteFood(req *foodspb.FoodRequest) (*foodspb.MessageResponse, error) {
-	res, err := s.repo.DeleteFood(req.GetId())
+func (s *Servepb) DeleteFood(ctx context.Context, req *foodspb.FoodRequest) (*foodspb.MessageResponse, error) {
+	res, err := s.repo.DeleteFood(ctx, req.GetId())
 	if err != nil {
 		return &foodspb.MessageResponse{
 			Success: res,

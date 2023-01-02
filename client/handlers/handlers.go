@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"foods_API_GRPC/models"
+	"foods_API_GRPC/proto/foodspb"
 	"foods_API_GRPC/server"
 	"net/http"
 
@@ -22,7 +23,7 @@ func HandlerWS(s server.Server) gin.HandlerFunc {
 	}
 }
 
-func HandlerCretedFood(s server.Server) gin.HandlerFunc {
+func HandlerCretedFood(s server.Server, food foodspb.FoodServiceClient) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		var f models.Food
 
@@ -33,14 +34,16 @@ func HandlerCretedFood(s server.Server) gin.HandlerFunc {
 			return
 		}
 
-		data := models.Food{
-			Name:  f.Name,
-			Price: f.Price,
+		data := foodspb.CreatedFoodRequest{
+			Name:        f.Name,
+			Price:       float32(f.Price),
+			Ingredients: f.Ingredients,
 		}
 
 		//method grpc add
+		food.CreatedFood(ctx, &data)
 
-		s.Hub().Broadcast(data, nil)
+		s.Hub().Broadcast(&data, nil)
 		ctx.JSON(http.StatusCreated, gin.H{
 			"message": "created",
 		})
