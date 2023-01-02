@@ -61,7 +61,7 @@ message FoodsResponse {
     repeated Food foods = 1;
 }
 
-message FoodDeleteResponse {
+message MessageResponse {
     bool success = 1;
 }
 
@@ -69,6 +69,6 @@ service FoodService {
     rpc CreatedFood(CreatedFoodRequest) returns (FoodResponse);
     rpc GetFood(FoodRequest) returns (FoodResponse);
     rpc GetFoods(GetFoodsRequest) returns (FoodsResponse);
-    rpc UpdateFood(FoodUpdateRequest) returns (FoodResponse);
-    rpc DeleteFood(FoodRequest) returns (FoodDeleteResponse);
+    rpc UpdateFood(FoodUpdateRequest) returns (MessageResponse);
+    rpc DeleteFood(FoodRequest) returns (MessageResponse);
 } 

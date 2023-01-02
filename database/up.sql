@@ -1,7 +1,7 @@
 DROP TABLE IF EXISTS ingredient;
 
 CREATED TABLE ingredient(
-    count SERIAL PRIMARY KEY NOT NULL,
+    idIngredient SERIAL PRIMARY KEY NOT NULL,
     name VARCHAR(32) NOT NULL,
     status BOOLEAN DEFAULT TRUE NOT NULL,
     id INT NOT NULL,    

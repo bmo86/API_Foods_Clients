@@ -82,7 +82,7 @@ func (i *instacePostgres) GetFoods(page int64) ([]*models.Food, error) {
 	return foods, nil
 }
 
-func (i *instacePostgres) UpdateFood(id int64, food *models.Food) (bool, error) {
+func (i *instacePostgres) UpdateFood(id int64, food *models.FoodUpdate) (bool, error) {
 	err := i.db.Exec("UPDATE food SET name = ?, price = ? WHERE id = ?", food.Name, food.Price, id)
 
 	if err.Error != nil {

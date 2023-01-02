@@ -31,3 +31,10 @@ type Ingredients struct {
 	IDFood int64  `json:"id_food"`
 	Status bool   `json:"status"`
 }
+
+type FoodUpdate struct {
+	gorm.Model
+	Name     string                 `json:"name"`
+	Price    float64                `json:"price"`
+	UpdateAt *timestamppb.Timestamp `json:"update_at"`
+}

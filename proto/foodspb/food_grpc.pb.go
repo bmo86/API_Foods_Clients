@@ -21,8 +21,8 @@ type FoodServiceClient interface {
 	CreatedFood(ctx context.Context, in *CreatedFoodRequest, opts ...grpc.CallOption) (*FoodResponse, error)
 	GetFood(ctx context.Context, in *FoodRequest, opts ...grpc.CallOption) (*FoodResponse, error)
 	GetFoods(ctx context.Context, in *GetFoodsRequest, opts ...grpc.CallOption) (*FoodsResponse, error)
-	UpdateFood(ctx context.Context, in *FoodUpdateRequest, opts ...grpc.CallOption) (*FoodResponse, error)
-	DeleteFood(ctx context.Context, in *FoodRequest, opts ...grpc.CallOption) (*FoodDeleteResponse, error)
+	UpdateFood(ctx context.Context, in *FoodUpdateRequest, opts ...grpc.CallOption) (*MessageResponse, error)
+	DeleteFood(ctx context.Context, in *FoodRequest, opts ...grpc.CallOption) (*MessageResponse, error)
 }
 
 type foodServiceClient struct {
@@ -60,8 +60,8 @@ func (c *foodServiceClient) GetFoods(ctx context.Context, in *GetFoodsRequest, o
 	return out, nil
 }
 
-func (c *foodServiceClient) UpdateFood(ctx context.Context, in *FoodUpdateRequest, opts ...grpc.CallOption) (*FoodResponse, error) {
-	out := new(FoodResponse)
+func (c *foodServiceClient) UpdateFood(ctx context.Context, in *FoodUpdateRequest, opts ...grpc.CallOption) (*MessageResponse, error) {
+	out := new(MessageResponse)
 	err := c.cc.Invoke(ctx, "/food.FoodService/UpdateFood", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -69,8 +69,8 @@ func (c *foodServiceClient) UpdateFood(ctx context.Context, in *FoodUpdateReques
 	return out, nil
 }
 
-func (c *foodServiceClient) DeleteFood(ctx context.Context, in *FoodRequest, opts ...grpc.CallOption) (*FoodDeleteResponse, error) {
-	out := new(FoodDeleteResponse)
+func (c *foodServiceClient) DeleteFood(ctx context.Context, in *FoodRequest, opts ...grpc.CallOption) (*MessageResponse, error) {
+	out := new(MessageResponse)
 	err := c.cc.Invoke(ctx, "/food.FoodService/DeleteFood", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -85,8 +85,8 @@ type FoodServiceServer interface {
 	CreatedFood(context.Context, *CreatedFoodRequest) (*FoodResponse, error)
 	GetFood(context.Context, *FoodRequest) (*FoodResponse, error)
 	GetFoods(context.Context, *GetFoodsRequest) (*FoodsResponse, error)
-	UpdateFood(context.Context, *FoodUpdateRequest) (*FoodResponse, error)
-	DeleteFood(context.Context, *FoodRequest) (*FoodDeleteResponse, error)
+	UpdateFood(context.Context, *FoodUpdateRequest) (*MessageResponse, error)
+	DeleteFood(context.Context, *FoodRequest) (*MessageResponse, error)
 	mustEmbedUnimplementedFoodServiceServer()
 }
 
@@ -103,10 +103,10 @@ func (UnimplementedFoodServiceServer) GetFood(context.Context, *FoodRequest) (*F
 func (UnimplementedFoodServiceServer) GetFoods(context.Context, *GetFoodsRequest) (*FoodsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetFoods not implemented")
 }
-func (UnimplementedFoodServiceServer) UpdateFood(context.Context, *FoodUpdateRequest) (*FoodResponse, error) {
+func (UnimplementedFoodServiceServer) UpdateFood(context.Context, *FoodUpdateRequest) (*MessageResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateFood not implemented")
 }
-func (UnimplementedFoodServiceServer) DeleteFood(context.Context, *FoodRequest) (*FoodDeleteResponse, error) {
+func (UnimplementedFoodServiceServer) DeleteFood(context.Context, *FoodRequest) (*MessageResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteFood not implemented")
 }
 func (UnimplementedFoodServiceServer) mustEmbedUnimplementedFoodServiceServer() {}
