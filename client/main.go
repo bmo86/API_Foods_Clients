@@ -24,12 +24,13 @@ func BindRoute(s server.Server, r *gin.Engine) {
 		log.Fatalf("did not connect : %v", err)
 	}
 
-	defer conn.Close()
+	//defer conn.Close()
 
 	client := foodspb.NewFoodServiceClient(conn)
 
 	r.GET("/home", handlers.HandlerHome(s))
 	r.POST("/food", handlers.HandlerCretedFood(s, client))
+	r.GET("/food/:id", handlers.HandlerCretedFood(s, client))
 
 	r.GET("/ws", handlers.HandlerWS(s))
 }

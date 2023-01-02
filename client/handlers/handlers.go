@@ -5,6 +5,7 @@ import (
 	"foods_API_GRPC/proto/foodspb"
 	"foods_API_GRPC/server"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -41,11 +42,44 @@ func HandlerCretedFood(s server.Server, food foodspb.FoodServiceClient) gin.Hand
 		}
 
 		//method grpc add
-		food.CreatedFood(ctx, &data)
+		res, err := food.CreatedFood(ctx, &data)
+		if err != nil {
+			ctx.JSON(http.StatusInternalServerError, gin.H{
+				"message": err.Error(),
+			})
+			return
+		}
 
-		s.Hub().Broadcast(&data, nil)
+		s.Hub().Broadcast(res, nil)
 		ctx.JSON(http.StatusCreated, gin.H{
 			"message": "created",
+			"data":    res,
+		})
+	}
+}
+
+func HandlerGetFoood(s server.Server, food foodspb.FoodServiceClient) gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+		idReq := ctx.Param("id")
+		id, err := strconv.ParseInt(idReq, 10, 64)
+		if err != nil {
+			ctx.JSON(http.StatusBadRequest, gin.H{
+				"message": "id - not found",
+			})
+			return
+		}
+
+		res, err := food.GetFood(ctx, &foodspb.FoodRequest{Id: id})
+		if err != nil {
+			ctx.JSON(http.StatusInternalServerError, gin.H{
+				"message": err.Error(),
+			})
+			return
+		}
+
+		ctx.JSON(http.StatusOK, gin.H{
+			"message": "get - food",
+			"data":    res,
 		})
 	}
 }

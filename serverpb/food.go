@@ -18,7 +18,7 @@ func NewServerpb(repo repo.RepoDatabase) *Servepb {
 	return &Servepb{repo: repo}
 }
 
-func (s *Servepb) CreateFood(ctx context.Context, req *foodspb.CreatedFoodRequest) (*foodspb.FoodResponse, error) {
+func (s *Servepb) CreatedFood(ctx context.Context, req *foodspb.CreatedFoodRequest) (*foodspb.FoodResponse, error) {
 
 	t := timestamppb.Now()
 
