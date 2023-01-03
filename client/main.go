@@ -18,29 +18,27 @@ var (
 )
 
 func BindRoute(s server.Server, r *gin.Engine) {
+	r.GET("/home", handlers.HandlerHome(s))
+	r.POST("/food", handlers.HandlerCretedFood(s))
+	r.GET("/foods/:id", handlers.HandlerGetFoood(s))
+	r.GET("/ws", handlers.HandlerWS(s))
+}
+
+func main() {
 	flag.Parse()
 	conn, err := grpc.Dial(*addr, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		log.Fatalf("did not connect : %v", err)
 	}
 
-	//defer conn.Close()
+	defer conn.Close()
 
 	client := foodspb.NewFoodServiceClient(conn)
-
-	r.GET("/home", handlers.HandlerHome(s))
-	r.POST("/food", handlers.HandlerCretedFood(s, client))
-	r.GET("/food/:id", handlers.HandlerCretedFood(s, client))
-
-	r.GET("/ws", handlers.HandlerWS(s))
-}
-
-func main() {
 	s, err := server.NewServer(context.Background(), &server.Config{
 		JWTSecret: "xd",
 		Port:      "8080",
 		UrlDB:     "xd",
-	})
+	}, &server.Proto{FoodServiceClient: client})
 
 	if err != nil {
 		log.Fatal(err)

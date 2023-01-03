@@ -5,8 +5,10 @@ import (
 	"foods_API_GRPC/models"
 	"foods_API_GRPC/proto/foodspb"
 	"foods_API_GRPC/repo"
+	"time"
 
 	"google.golang.org/protobuf/types/known/timestamppb"
+	"gorm.io/gorm"
 )
 
 type Servepb struct {
@@ -20,14 +22,16 @@ func NewServerpb(repo repo.RepoDatabase) *Servepb {
 
 func (s *Servepb) CreatedFood(ctx context.Context, req *foodspb.CreatedFoodRequest) (*foodspb.FoodResponse, error) {
 
-	t := timestamppb.Now()
+	t := time.Now().UTC()
 
-	food := &models.Food{
+	food := &models.FoodWithIngredients{
+		Model: gorm.Model{
+			CreatedAt: t,
+			UpdatedAt: t,
+		},
 		Name:        req.GetName(),
 		Price:       float64(req.GetPrice()),
 		Ingredients: req.GetIngredients(),
-		CreatedAt:   t,
-		UpdatedAt:   t,
 		Status:      true,
 	}
 
@@ -41,8 +45,8 @@ func (s *Servepb) CreatedFood(ctx context.Context, req *foodspb.CreatedFoodReque
 			Name:        req.GetName(),
 			Price:       req.GetPrice(),
 			Ingredients: req.GetIngredients(),
-			CreatedAt:   t,
-			UpdateAt:    t,
+			CreatedAt:   timestamppb.New(t),
+			UpdateAt:    timestamppb.New(t),
 			Status:      true,
 		},
 	}, nil
@@ -60,8 +64,8 @@ func (s *Servepb) GetFood(ctx context.Context, req *foodspb.FoodRequest) (*foods
 			Name:        food.Name,
 			Price:       float32(food.Price),
 			Ingredients: food.Ingredients,
-			CreatedAt:   food.CreatedAt,
-			UpdateAt:    food.UpdatedAt,
+			CreatedAt:   timestamppb.New(food.CreatedAt),
+			UpdateAt:    timestamppb.New(food.UpdatedAt),
 			Status:      food.Status,
 		},
 	}, nil
@@ -77,13 +81,13 @@ func (s *Servepb) GetFoods(ctx context.Context, req *foodspb.GetFoodsRequest) (*
 
 	for _, food := range foods {
 		f := &foodspb.Food{
-			Id:          food.Id,
-			Name:        food.Name,
-			Price:       float32(food.Price),
-			Ingredients: food.Ingredients,
-			CreatedAt:   food.CreatedAt,
-			UpdateAt:    food.UpdatedAt,
-			Status:      food.Status,
+			Id:    int64(food.ID),
+			Name:  food.Name,
+			Price: float32(food.Price),
+			//Ingredients: food.Ingredients,
+			CreatedAt: timestamppb.New(food.CreatedAt),
+			UpdateAt:  timestamppb.New(food.UpdatedAt),
+			Status:    food.Status,
 		}
 		resFoods = append(resFoods, f)
 	}
@@ -95,9 +99,11 @@ func (s *Servepb) GetFoods(ctx context.Context, req *foodspb.GetFoodsRequest) (*
 
 func (s *Servepb) UpdateFood(ctx context.Context, req *foodspb.FoodUpdateRequest) (*foodspb.MessageResponse, error) {
 	food := models.FoodUpdate{
-		Name:     req.GetName(),
-		Price:    float64(req.GetPrice()),
-		UpdateAt: timestamppb.Now(),
+		Model: gorm.Model{
+			UpdatedAt: time.Now().UTC(),
+		},
+		Name:  req.GetName(),
+		Price: float64(req.GetPrice()),
 	}
 	res, err := s.repo.UpdateFood(ctx, req.GetId(), food)
 	if err != nil {

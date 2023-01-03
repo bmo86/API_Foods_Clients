@@ -24,9 +24,9 @@ func HandlerWS(s server.Server) gin.HandlerFunc {
 	}
 }
 
-func HandlerCretedFood(s server.Server, food foodspb.FoodServiceClient) gin.HandlerFunc {
+func HandlerCretedFood(s server.Server) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		var f models.Food
+		var f models.FoodWithIngredients
 
 		if err := ctx.ShouldBind(&f); err != nil {
 			ctx.JSON(http.StatusBadRequest, gin.H{
@@ -42,7 +42,7 @@ func HandlerCretedFood(s server.Server, food foodspb.FoodServiceClient) gin.Hand
 		}
 
 		//method grpc add
-		res, err := food.CreatedFood(ctx, &data)
+		res, err := s.Proto().FoodServiceClient.CreatedFood(ctx, &data)
 		if err != nil {
 			ctx.JSON(http.StatusInternalServerError, gin.H{
 				"message": err.Error(),
@@ -58,7 +58,7 @@ func HandlerCretedFood(s server.Server, food foodspb.FoodServiceClient) gin.Hand
 	}
 }
 
-func HandlerGetFoood(s server.Server, food foodspb.FoodServiceClient) gin.HandlerFunc {
+func HandlerGetFoood(s server.Server) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		idReq := ctx.Param("id")
 		id, err := strconv.ParseInt(idReq, 10, 64)
@@ -69,7 +69,7 @@ func HandlerGetFoood(s server.Server, food foodspb.FoodServiceClient) gin.Handle
 			return
 		}
 
-		res, err := food.GetFood(ctx, &foodspb.FoodRequest{Id: id})
+		res, err := s.Proto().FoodServiceClient.GetFood(ctx, &foodspb.FoodRequest{Id: id})
 		if err != nil {
 			ctx.JSON(http.StatusInternalServerError, gin.H{
 				"message": err.Error(),

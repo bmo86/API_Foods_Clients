@@ -3,15 +3,19 @@ package database
 import (
 	"context"
 	"foods_API_GRPC/models"
+
+	"gorm.io/gorm"
 )
 
-func (i *instacePostgres) CretedFood(ctx context.Context, food *models.Food) error {
-	f := models.FoodWithoutIngredients{
-		Name:      food.Name,
-		Price:     food.Price,
-		CreatedAt: food.CreatedAt,
-		UpdateAt:  food.UpdatedAt,
-		Status:    food.Status,
+func (i *instacePostgres) CretedFood(ctx context.Context, food *models.FoodWithIngredients) error {
+	f := models.Food{
+		Model: gorm.Model{
+			CreatedAt: food.CreatedAt,
+			UpdatedAt: food.UpdatedAt,
+		},
+		Name:   food.Name,
+		Price:  food.Price,
+		Status: food.Status,
 	}
 
 	err := i.db.Create(&f)
@@ -21,8 +25,8 @@ func (i *instacePostgres) CretedFood(ctx context.Context, food *models.Food) err
 
 		for _, ingredient := range food.Ingredients {
 			i := models.Ingredients{
-				Name:   ingredient,
-				IDFood: int64(f.ID),
+				Name: ingredient,
+				Id:   int64(f.ID),
 			}
 
 			ingredients = append(ingredients, &i)
@@ -35,19 +39,21 @@ func (i *instacePostgres) CretedFood(ctx context.Context, food *models.Food) err
 	return err.Error
 }
 
-func (i *instacePostgres) GetFood(ctx context.Context, id int64) (*models.Food, error) {
+func (i *instacePostgres) GetFood(ctx context.Context, id int64) (*models.FoodWithIngredients, error) {
 
-	rows, err := i.db.Raw("SELECT id, name, price FROM food WHERE id = ? ", id).Rows()
+	sql := "SELECT f.id, f.name, f.price, STRING_AGG(i.name, ', ') AS ingredients FROM foods f INNER JOIN ingredients i ON (i.id = f.id) WHERE f.id = ? GROUP BY f.id"
+
+	rows, err := i.db.Raw(sql, id).Rows()
 	if err != nil {
 		return nil, err
 	}
 
 	defer rows.Close()
 
-	var food = models.Food{}
+	var food = models.FoodWithIngredients{}
 
 	for rows.Next() {
-		if err := rows.Scan(&food.Id, &food.Name, &food.Price); err == nil {
+		if err := rows.Scan(&food.ID, &food.Name, &food.Price, &food.Ingredients); err == nil {
 			return &food, nil
 		}
 	}
@@ -71,7 +77,7 @@ func (i *instacePostgres) GetFoods(ctx context.Context, page int64) ([]*models.F
 
 	for rows.Next() {
 		var food models.Food
-		if err := rows.Scan(&food.Id, &food.Name, &food.Price); err != nil {
+		if err := rows.Scan(&food.ID, &food.Name, &food.Price); err != nil {
 			foods = append(foods, &food)
 		}
 	}

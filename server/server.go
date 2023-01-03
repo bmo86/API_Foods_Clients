@@ -3,6 +3,7 @@ package server
 import (
 	"context"
 	"errors"
+	"foods_API_GRPC/proto/foodspb"
 	"foods_API_GRPC/websocket"
 	"log"
 	"net/http"
@@ -17,15 +18,21 @@ type Config struct {
 	JWTSecret string
 }
 
+type Proto struct {
+	foodspb.FoodServiceClient
+}
+
 type Server interface {
 	Config() *Config
 	Hub() *websocket.Hub
+	Proto() *Proto
 }
 
 type Broker struct {
 	config *Config
 	router *gin.Engine
 	hub    *websocket.Hub
+	proto  *Proto
 }
 
 func (b *Broker) Config() *Config {
@@ -36,7 +43,11 @@ func (b *Broker) Hub() *websocket.Hub {
 	return b.hub
 }
 
-func NewServer(ctx context.Context, config *Config) (*Broker, error) {
+func (b *Broker) Proto() *Proto {
+	return b.proto
+}
+
+func NewServer(ctx context.Context, config *Config, proto *Proto) (*Broker, error) {
 	if config.Port == "" {
 		return nil, errors.New("port is required")
 	}
@@ -53,6 +64,7 @@ func NewServer(ctx context.Context, config *Config) (*Broker, error) {
 		config: config,
 		router: gin.New(),
 		hub:    websocket.NewHub(),
+		proto:  proto,
 	}
 
 	return b, nil

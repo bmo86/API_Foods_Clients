@@ -1,21 +1,25 @@
-DROP TABLE IF EXISTS food;
+DROP TABLE IF EXISTS foods;
 
-CREATE TABLE food(
+CREATE TABLE foods(
     id SERIAL PRIMARY KEY NOT NULL,
     name VARCHAR(32) NOT NULL,
     price FLOAT NOT NULL,
     created_at timestamp NOT NULL,
-    update_at timestamp NOT NULL,
+    updated_at timestamp NOT NULL,
+    deleted_at timestamp,
     status BOOLEAN NOT NULL   
 );
 
-DROP TABLE IF EXISTS ingredient;
+DROP TABLE IF EXISTS ingredients;
 
-CREATE TABLE ingredient(
-    idIngredient SERIAL PRIMARY KEY NOT NULL,
+CREATE TABLE ingredients(
+    idIngredients SERIAL PRIMARY KEY NOT NULL,
     name VARCHAR(32) NOT NULL,
     status BOOLEAN DEFAULT TRUE NOT NULL,
+    created_at timestamp NOT NULL,
+    updated_at timestamp NOT NULL,
+    deleted_at timestamp,
     id INT NOT NULL,    
-    CONSTRAINT FK_ingredient_food FOREIGN KEY (id)
-        REFERENCES food(id) 
+    CONSTRAINT FK_ingredients_foods FOREIGN KEY (id)
+        REFERENCES foods(id) 
 );

@@ -5,8 +5,7 @@ import (
 	"gorm.io/gorm"
 )
 
-type Food struct {
-	gorm.Model
+type FoodAllData struct {
 	Id          int64                  `json:"id"`
 	Name        string                 `json:"name"`
 	Price       float64                `json:"price"`
@@ -16,25 +15,30 @@ type Food struct {
 	Status      bool                   `json:"status"`
 }
 
-type FoodWithoutIngredients struct {
+type Food struct {
 	gorm.Model
-	Name      string                 `json:"name"`
-	Price     float64                `json:"price"`
-	CreatedAt *timestamppb.Timestamp `json:"created_at"`
-	UpdateAt  *timestamppb.Timestamp `json:"update_at"`
-	Status    bool                   `json:"status"`
+	Name   string  `json:"name"`
+	Price  float64 `json:"price"`
+	Status bool    `json:"status"`
+}
+
+type FoodWithIngredients struct {
+	gorm.Model
+	Name        string   `json:"name"`
+	Price       float64  `json:"price"`
+	Ingredients []string `json:"ingretiens"`
+	Status      bool     `json:"status"`
 }
 
 type Ingredients struct {
 	gorm.Model
 	Name   string `json:"name"`
-	IDFood int64  `json:"id_food"`
+	Id     int64  `json:"id_food"`
 	Status bool   `json:"status"`
 }
 
 type FoodUpdate struct {
 	gorm.Model
-	Name     string                 `json:"name"`
-	Price    float64                `json:"price"`
-	UpdateAt *timestamppb.Timestamp `json:"update_at"`
+	Name  string  `json:"name"`
+	Price float64 `json:"price"`
 }
