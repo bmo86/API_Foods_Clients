@@ -83,3 +83,34 @@ func HandlerGetFoood(s server.Server) gin.HandlerFunc {
 		})
 	}
 }
+
+func HandlerGetFoods(s server.Server) gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+		pageReq := ctx.Param("page")
+
+		page, err := strconv.ParseInt(pageReq, 10, 64)
+		if err != nil {
+			ctx.JSON(http.StatusBadRequest, gin.H{
+				"message": err.Error(),
+			})
+			return
+		}
+		if page == 0 {
+			page = 5
+		}
+
+		res, err := s.Proto().GetFoods(ctx, &foodspb.GetFoodsRequest{Page: page})
+		if err != nil {
+			ctx.JSON(http.StatusInternalServerError, gin.H{
+				"message": err.Error(),
+			})
+			return
+		}
+
+		ctx.JSON(http.StatusOK, gin.H{
+			"message": "get",
+			"foods":   res,
+		})
+
+	}
+}

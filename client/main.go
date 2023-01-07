@@ -19,8 +19,10 @@ var (
 
 func BindRoute(s server.Server, r *gin.Engine) {
 	r.GET("/home", handlers.HandlerHome(s))
+	//foods
 	r.POST("/food", handlers.HandlerCretedFood(s))
 	r.GET("/food/:id", handlers.HandlerGetFoood(s))
+	r.GET("/foods/:page", handlers.HandlerGetFoods(s))
 	r.GET("/ws", handlers.HandlerWS(s))
 }
 
