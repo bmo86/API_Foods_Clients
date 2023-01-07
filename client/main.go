@@ -20,7 +20,7 @@ var (
 func BindRoute(s server.Server, r *gin.Engine) {
 	r.GET("/home", handlers.HandlerHome(s))
 	r.POST("/food", handlers.HandlerCretedFood(s))
-	r.GET("/foods/:id", handlers.HandlerGetFoood(s))
+	r.GET("/food/:id", handlers.HandlerGetFoood(s))
 	r.GET("/ws", handlers.HandlerWS(s))
 }
 

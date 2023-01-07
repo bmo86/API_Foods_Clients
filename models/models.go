@@ -42,3 +42,7 @@ type FoodUpdate struct {
 	Name  string  `json:"name"`
 	Price float64 `json:"price"`
 }
+
+type InResIngredients struct {
+	Name string `json:"name"`
+}

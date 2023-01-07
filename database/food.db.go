@@ -3,6 +3,7 @@ package database
 import (
 	"context"
 	"foods_API_GRPC/models"
+	"strings"
 
 	"gorm.io/gorm"
 )
@@ -41,7 +42,7 @@ func (i *instacePostgres) CretedFood(ctx context.Context, food *models.FoodWithI
 
 func (i *instacePostgres) GetFood(ctx context.Context, id int64) (*models.FoodWithIngredients, error) {
 
-	sql := "SELECT f.id, f.name, f.price, STRING_AGG(i.name, ', ') AS ingredients FROM foods f INNER JOIN ingredients i ON (i.id = f.id) WHERE f.id = ? GROUP BY f.id"
+	sql := "SELECT f.id, f.name, f.price, f.created_at, f.updated_at, f.status FROM foods f WHERE f.id = ?"
 
 	rows, err := i.db.Raw(sql, id).Rows()
 	if err != nil {
@@ -50,10 +51,12 @@ func (i *instacePostgres) GetFood(ctx context.Context, id int64) (*models.FoodWi
 
 	defer rows.Close()
 
-	var food = models.FoodWithIngredients{}
+	var food models.FoodWithIngredients
 
 	for rows.Next() {
-		if err := rows.Scan(&food.ID, &food.Name, &food.Price, &food.Ingredients); err == nil {
+
+		if err := rows.Scan(&food.ID, &food.Name, &food.Price, &food.CreatedAt, &food.UpdatedAt, &food.Status); err == nil {
+			food.Ingredients = i.GetIngredients(id)
 			return &food, nil
 		}
 	}
@@ -112,4 +115,11 @@ func (i *instacePostgres) DeleteFood(ctx context.Context, id int64) (bool, error
 func (i *instacePostgres) InsertIngredients(ctx context.Context, in []*models.Ingredients) error {
 	err := i.db.Create(&in)
 	return err.Error
+}
+
+func (i *instacePostgres) GetIngredients(id int64) []string {
+	var res *models.InResIngredients
+	i.db.Table("ingredients").Select("STRING_AGG(name, ', ') AS name").Where("id = ?", id).Scan(&res)
+	ingredients := strings.Split(res.Name, ",")
+	return ingredients
 }
