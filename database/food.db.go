@@ -69,7 +69,7 @@ func (i *instacePostgres) GetFood(ctx context.Context, id int64) (*models.ResFoo
 }
 
 func (i *instacePostgres) GetFoods(ctx context.Context, page int64) ([]*models.Food, error) {
-	rows, err := i.db.Raw("SELECT id, name, price FROM food LIMIT = ? OFFSET = ?", page, page*3).Rows()
+	rows, err := i.db.Raw("SELECT id, name, price, status FROM foods OFFSET ? LIMIT ?", page, page*3).Rows()
 	if err != nil {
 		return nil, err
 	}
@@ -80,7 +80,7 @@ func (i *instacePostgres) GetFoods(ctx context.Context, page int64) ([]*models.F
 
 	for rows.Next() {
 		var food models.Food
-		if err := rows.Scan(&food.ID, &food.Name, &food.Price); err != nil {
+		if err := rows.Scan(&food.ID, &food.Name, &food.Price, &food.Status); err != nil {
 			foods = append(foods, &food)
 		}
 	}

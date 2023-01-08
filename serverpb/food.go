@@ -88,9 +88,9 @@ func (s *Servepb) GetFoods(ctx context.Context, req *foodspb.GetFoodsRequest) (*
 			Name:  food.Name,
 			Price: float32(food.Price),
 			//Ingredients: food.Ingredients,
-			CreatedAt: timestamppb.New(food.CreatedAt),
-			UpdateAt:  timestamppb.New(food.UpdatedAt),
-			Status:    food.Status,
+			//CreatedAt: timestamppb.New(food.CreatedAt),
+			//UpdateAt:  timestamppb.New(food.UpdatedAt),
+			Status: food.Status,
 		}
 		resFoods = append(resFoods, f)
 	}
