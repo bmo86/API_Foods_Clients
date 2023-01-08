@@ -19,7 +19,7 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type FoodServiceClient interface {
 	CreatedFood(ctx context.Context, in *CreatedFoodRequest, opts ...grpc.CallOption) (*FoodResponse, error)
-	GetFood(ctx context.Context, in *FoodRequest, opts ...grpc.CallOption) (*FoodResponse, error)
+	GetFood(ctx context.Context, in *FoodRequest, opts ...grpc.CallOption) (*FoodGetResponse, error)
 	GetFoods(ctx context.Context, in *GetFoodsRequest, opts ...grpc.CallOption) (*FoodsResponse, error)
 	UpdateFood(ctx context.Context, in *FoodUpdateRequest, opts ...grpc.CallOption) (*MessageResponse, error)
 	DeleteFood(ctx context.Context, in *FoodRequest, opts ...grpc.CallOption) (*MessageResponse, error)
@@ -42,8 +42,8 @@ func (c *foodServiceClient) CreatedFood(ctx context.Context, in *CreatedFoodRequ
 	return out, nil
 }
 
-func (c *foodServiceClient) GetFood(ctx context.Context, in *FoodRequest, opts ...grpc.CallOption) (*FoodResponse, error) {
-	out := new(FoodResponse)
+func (c *foodServiceClient) GetFood(ctx context.Context, in *FoodRequest, opts ...grpc.CallOption) (*FoodGetResponse, error) {
+	out := new(FoodGetResponse)
 	err := c.cc.Invoke(ctx, "/food.FoodService/GetFood", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -83,7 +83,7 @@ func (c *foodServiceClient) DeleteFood(ctx context.Context, in *FoodRequest, opt
 // for forward compatibility
 type FoodServiceServer interface {
 	CreatedFood(context.Context, *CreatedFoodRequest) (*FoodResponse, error)
-	GetFood(context.Context, *FoodRequest) (*FoodResponse, error)
+	GetFood(context.Context, *FoodRequest) (*FoodGetResponse, error)
 	GetFoods(context.Context, *GetFoodsRequest) (*FoodsResponse, error)
 	UpdateFood(context.Context, *FoodUpdateRequest) (*MessageResponse, error)
 	DeleteFood(context.Context, *FoodRequest) (*MessageResponse, error)
@@ -97,7 +97,7 @@ type UnimplementedFoodServiceServer struct {
 func (UnimplementedFoodServiceServer) CreatedFood(context.Context, *CreatedFoodRequest) (*FoodResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreatedFood not implemented")
 }
-func (UnimplementedFoodServiceServer) GetFood(context.Context, *FoodRequest) (*FoodResponse, error) {
+func (UnimplementedFoodServiceServer) GetFood(context.Context, *FoodRequest) (*FoodGetResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetFood not implemented")
 }
 func (UnimplementedFoodServiceServer) GetFoods(context.Context, *GetFoodsRequest) (*FoodsResponse, error) {

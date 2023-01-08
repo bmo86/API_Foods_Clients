@@ -16,13 +16,17 @@ func TestGetIngredients(t *testing.T) {
 	if err != nil {
 		c.Error(err, "connection db")
 	}
-	expected := []string{"harina", "leche", "azucar"}
+	expected := models.InResIngredients{
+		Id:   []string{"1", "2", "3"},
+		Name: []string{"test ingredient", "test ingredient", "test ingredient3"},
+	}
 
 	result := re.GetIngredients(1)
 	if err != nil {
 		c.Error(err, expected)
 	}
-	c.Equal(expected, result)
+	c.Equal(expected.Id, result.Id)
+	c.Equal(expected.Name, result.Name)
 }
 
 func TestUpdateIngredient(t *testing.T) {

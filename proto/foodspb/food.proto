@@ -32,6 +32,21 @@ message Food {
     bool status = 7;
 }
 
+message ResFood {
+    int64 id = 1;
+    string name = 2;
+    float price = 3;
+    Ingre ingredi = 4;
+    google.protobuf.Timestamp createdAt = 5;
+    google.protobuf.Timestamp updateAt = 6;
+    bool status = 7;
+}
+
+message Ingre {
+    repeated string id = 1;
+    repeated string name = 2; 
+}
+
 message FoodUpdateRequest {
     int64 id = 1;
     string name = 2;
@@ -57,6 +72,8 @@ message GetFoodsRequest {
 
 message FoodResponse { Food food = 1; }
 
+message FoodGetResponse { ResFood food = 1; }
+
 message FoodsResponse {
     repeated Food foods = 1;
 }
@@ -67,7 +84,7 @@ message MessageResponse {
 
 service FoodService {
     rpc CreatedFood(CreatedFoodRequest) returns (FoodResponse);
-    rpc GetFood(FoodRequest) returns (FoodResponse);
+    rpc GetFood(FoodRequest) returns (FoodGetResponse);
     rpc GetFoods(GetFoodsRequest) returns (FoodsResponse);
     rpc UpdateFood(FoodUpdateRequest) returns (MessageResponse);
     rpc DeleteFood(FoodRequest) returns (MessageResponse);

@@ -40,7 +40,7 @@ func (i *instacePostgres) CretedFood(ctx context.Context, food *models.FoodWithI
 	return err.Error
 }
 
-func (i *instacePostgres) GetFood(ctx context.Context, id int64) (*models.FoodWithIngredients, error) {
+func (i *instacePostgres) GetFood(ctx context.Context, id int64) (*models.ResFoodWithIngredients, error) {
 
 	sql := "SELECT f.id, f.name, f.price, f.created_at, f.updated_at, f.status FROM foods f WHERE f.id = ?"
 
@@ -51,7 +51,7 @@ func (i *instacePostgres) GetFood(ctx context.Context, id int64) (*models.FoodWi
 
 	defer rows.Close()
 
-	var food models.FoodWithIngredients
+	var food models.ResFoodWithIngredients
 
 	for rows.Next() {
 
@@ -117,11 +117,15 @@ func (i *instacePostgres) InsertIngredients(ctx context.Context, in []*models.In
 	return err.Error
 }
 
-func (i *instacePostgres) GetIngredients(id int64) []string {
-	var res *models.InResIngredients
-	i.db.Table("ingredients").Select("STRING_AGG(name, ',') AS name").Where("id = ?", id).Scan(&res)
+func (i *instacePostgres) GetIngredients(id int64) *models.InResIngredients {
+	var res *models.ScanIngredients
+	i.db.Table("ingredients").Select("STRING_AGG(CONCAT(idingredients), ',') AS id, STRING_AGG(name, ',') AS name").Where("id = ?", id).Scan(&res)
+	ids := strings.Split(res.Id, ",")
 	ingredients := strings.Split(res.Name, ",")
-	return ingredients
+	return &models.InResIngredients{
+		Id:   ids,
+		Name: ingredients,
+	}
 }
 
 func (i *instacePostgres) UpdateIngredient(in *models.Ingredients) (bool, error) {

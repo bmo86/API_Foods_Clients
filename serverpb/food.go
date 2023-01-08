@@ -52,21 +52,24 @@ func (s *Servepb) CreatedFood(ctx context.Context, req *foodspb.CreatedFoodReque
 	}, nil
 }
 
-func (s *Servepb) GetFood(ctx context.Context, req *foodspb.FoodRequest) (*foodspb.FoodResponse, error) {
+func (s *Servepb) GetFood(ctx context.Context, req *foodspb.FoodRequest) (*foodspb.FoodGetResponse, error) {
 	food, err := s.repo.GetFood(ctx, req.GetId())
 	if err != nil {
 		return nil, err
 	}
 
-	return &foodspb.FoodResponse{
-		Food: &foodspb.Food{
-			Id:          0,
-			Name:        food.Name,
-			Price:       float32(food.Price),
-			Ingredients: food.Ingredients,
-			CreatedAt:   timestamppb.New(food.CreatedAt),
-			UpdateAt:    timestamppb.New(food.UpdatedAt),
-			Status:      food.Status,
+	return &foodspb.FoodGetResponse{
+		Food: &foodspb.ResFood{
+			Id:    0,
+			Name:  food.Name,
+			Price: float32(food.Price),
+			Ingredi: &foodspb.Ingre{
+				Id:   food.Ingredients.Id,
+				Name: food.Ingredients.Name,
+			},
+			CreatedAt: timestamppb.New(food.CreatedAt),
+			UpdateAt:  timestamppb.New(food.UpdatedAt),
+			Status:    food.Status,
 		},
 	}, nil
 }

@@ -30,6 +30,14 @@ type FoodWithIngredients struct {
 	Status      bool     `json:"status"`
 }
 
+type ResFoodWithIngredients struct {
+	gorm.Model
+	Name        string            `json:"name"`
+	Price       float64           `json:"price"`
+	Ingredients *InResIngredients `json:"ingretiens"`
+	Status      bool              `json:"status"`
+}
+
 type Ingredients struct {
 	gorm.Model
 	Name   string `json:"name"`
@@ -44,5 +52,11 @@ type FoodUpdate struct {
 }
 
 type InResIngredients struct {
+	Id   []string `json:"id"`
+	Name []string `json:"name"`
+}
+
+type ScanIngredients struct {
+	Id   string `json:"id"`
 	Name string `json:"name"`
 }

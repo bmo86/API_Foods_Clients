@@ -7,12 +7,12 @@ import (
 
 type RepoDatabase interface {
 	CretedFood(ctx context.Context, food *models.FoodWithIngredients) error
-	GetFood(ctx context.Context, id int64) (*models.FoodWithIngredients, error)
+	GetFood(ctx context.Context, id int64) (*models.ResFoodWithIngredients, error)
 	GetFoods(ctx context.Context, page int64) ([]*models.Food, error)
 	UpdateFood(ctx context.Context, id int64, food models.FoodUpdate) (bool, error)
 	DeleteFood(ctx context.Context, id int64) (bool, error)
 	InsertIngredients(ctx context.Context, in []*models.Ingredients) error
-	GetIngredients(id int64) []string
+	GetIngredients(id int64) *models.InResIngredients
 }
 
 var repository RepoDatabase
@@ -25,7 +25,7 @@ func CretedFood(ctx context.Context, food *models.FoodWithIngredients) error {
 	return repository.CretedFood(ctx, food)
 }
 
-func GetFood(ctx context.Context, id int64) (*models.FoodWithIngredients, error) {
+func GetFood(ctx context.Context, id int64) (*models.ResFoodWithIngredients, error) {
 	return repository.GetFood(ctx, id)
 }
 
@@ -47,6 +47,6 @@ func InsertIngredients(ctx context.Context, in []*models.Ingredients) error {
 	return repository.InsertIngredients(ctx, in)
 }
 
-func GetIngredients(id int64) []string {
+func GetIngredients(id int64) *models.InResIngredients {
 	return repository.GetIngredients(id)
 }
