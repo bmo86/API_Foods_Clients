@@ -123,3 +123,15 @@ func (i *instacePostgres) GetIngredients(id int64) []string {
 	ingredients := strings.Split(res.Name, ",")
 	return ingredients
 }
+
+func (i *instacePostgres) UpdateIngredient(in *models.Ingredients) (bool, error) {
+	data := map[string]interface{}{
+		"name":       in.Name,
+		"updated_at": in.UpdatedAt,
+	}
+	err := i.db.Table("ingredients").Where("idIngredients = ?", in.ID).UpdateColumns(data)
+	if err.Error != nil {
+		return false, err.Error
+	}
+	return true, nil
+}
