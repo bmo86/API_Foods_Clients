@@ -119,7 +119,7 @@ func (i *instacePostgres) InsertIngredients(ctx context.Context, in []*models.In
 
 func (i *instacePostgres) GetIngredients(id int64) []string {
 	var res *models.InResIngredients
-	i.db.Table("ingredients").Select("STRING_AGG(name, ', ') AS name").Where("id = ?", id).Scan(&res)
+	i.db.Table("ingredients").Select("STRING_AGG(name, ',') AS name").Where("id = ?", id).Scan(&res)
 	ingredients := strings.Split(res.Name, ",")
 	return ingredients
 }

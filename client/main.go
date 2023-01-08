@@ -23,6 +23,8 @@ func BindRoute(s server.Server, r *gin.Engine) {
 	r.POST("/food", handlers.HandlerCretedFood(s))
 	r.GET("/food/:id", handlers.HandlerGetFoood(s))
 	r.GET("/foods/:page", handlers.HandlerGetFoods(s))
+	r.DELETE("/food/:id", handlers.HandlerDeleteFoods(s))
+	r.PUT("/food/:id", handlers.HandlerUpdateFoods(s))
 	r.GET("/ws", handlers.HandlerWS(s))
 }
 

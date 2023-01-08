@@ -114,3 +114,71 @@ func HandlerGetFoods(s server.Server) gin.HandlerFunc {
 
 	}
 }
+
+func HandlerDeleteFoods(s server.Server) gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+		idReq := ctx.Param("id")
+		id, err := strconv.ParseInt(idReq, 10, 64)
+		if err != nil {
+			ctx.JSON(http.StatusBadRequest, gin.H{
+				"message": err.Error(),
+			})
+			return
+		}
+
+		res, err := s.Proto().DeleteFood(ctx, &foodspb.FoodRequest{Id: id})
+		if err != nil {
+			ctx.JSON(http.StatusInternalServerError, gin.H{
+				"message": err.Error(),
+			})
+			return
+		}
+
+		ctx.JSON(http.StatusOK, gin.H{
+			"message": "Delete",
+			"food":    res,
+		})
+	}
+}
+
+func HandlerUpdateFoods(s server.Server) gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+		var food models.FoodUpdate
+
+		if err := ctx.ShouldBind(&food); err != nil {
+			ctx.JSON(http.StatusBadRequest, gin.H{
+				"message": err.Error(),
+			})
+			return
+		}
+
+		idReq := ctx.Param("id")
+		id, err := strconv.ParseInt(idReq, 10, 64)
+		if err != nil {
+			ctx.JSON(http.StatusBadRequest, gin.H{
+				"message": err.Error(),
+			})
+			return
+		}
+
+		data := &foodspb.FoodUpdateRequest{
+			Id:    id,
+			Name:  food.Name,
+			Price: float32(food.Price),
+		}
+
+		res, err := s.Proto().UpdateFood(ctx, data)
+		if err != nil {
+			ctx.JSON(http.StatusInternalServerError, gin.H{
+				"message": err.Error(),
+			})
+			return
+		}
+
+		ctx.JSON(http.StatusOK, gin.H{
+			"message": "update",
+			"update":  res,
+		})
+
+	}
+}

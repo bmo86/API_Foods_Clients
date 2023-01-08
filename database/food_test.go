@@ -13,11 +13,12 @@ func TestGetIngredients(t *testing.T) {
 	if err != nil {
 		c.Error(err, "connection db")
 	}
-	expected := []string{"harina", " leche", " azucar"}
+	expected := []string{"harina", "leche", "azucar"}
 
 	result := re.GetIngredients(1)
 	if err != nil {
 		c.Error(err, expected)
 	}
+	t.Log(result)
 	c.Equal(expected, result)
 }
