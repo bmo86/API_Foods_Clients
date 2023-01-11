@@ -4,6 +4,7 @@ import (
 	"context"
 	"foods_API_GRPC/models"
 	"strings"
+	"time"
 
 	"gorm.io/gorm"
 )
@@ -26,8 +27,9 @@ func (i *instacePostgres) CretedFood(ctx context.Context, food *models.FoodWithI
 
 		for _, ingredient := range food.Ingredients {
 			i := models.Ingredients{
-				Name: ingredient,
-				Id:   int64(f.ID),
+				Name:   ingredient,
+				Id:     int64(f.ID),
+				Status: true,
 			}
 
 			ingredients = append(ingredients, &i)
@@ -107,7 +109,31 @@ func (i *instacePostgres) DeleteFood(ctx context.Context, id int64) (bool, error
 	if err := i.db.Delete(&f, id).Error; err != nil {
 		return false, nil
 	}
+
+	ok, err := i.DeleteIngredient(int64(id))
+	if err != nil || !ok {
+		return false, err
+	}
+
+	err = i.UpdateStatus("foods", id)
+	if err != nil {
+		return false, nil
+	}
+
 	return true, nil
+}
+
+func (i *instacePostgres) UpdateStatus(nameTable string, id int64) error {
+	data := map[string]interface{}{
+		"status":     false,
+		"updated_at": time.Now(),
+	}
+
+	err := i.db.Table(nameTable).Where("id = ?", id).UpdateColumns(data)
+	if err != nil {
+		return err.Error
+	}
+	return nil
 }
 
 //ingredients
@@ -137,5 +163,17 @@ func (i *instacePostgres) UpdateIngredient(in *models.Ingredients) (bool, error)
 	if err.Error != nil {
 		return false, err.Error
 	}
+	return true, nil
+}
+
+func (i *instacePostgres) DeleteIngredient(id int64) (bool, error) {
+	var ingredients = models.Ingredients{}
+	if err := i.db.Delete(&ingredients, "id = ?", id).Error; err != nil {
+		return false, nil
+	}
+	if err := i.UpdateStatus("ingredients", id); err != nil {
+		return false, nil
+	}
+
 	return true, nil
 }

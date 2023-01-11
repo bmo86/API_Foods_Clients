@@ -1,6 +1,7 @@
 package database
 
 import (
+	"context"
 	"foods_API_GRPC/models"
 	"testing"
 	"time"
@@ -52,4 +53,18 @@ func TestUpdateIngredient(t *testing.T) {
 	if !updated {
 		t.Errorf("Expected function to return true but got false")
 	}
+}
+
+func TestDelete(t *testing.T) {
+	c := require.New(t)
+	i, err := NewConnectionDatabase("postgres://postgres:postgres@localhost:54321/postgres?sslmode=disable")
+	if err != nil {
+		c.Error(err, "connection db")
+	}
+
+	delete, err := i.DeleteFood(context.Background(), 28)
+	if err != nil {
+		t.Log(err.Error())
+	}
+	c.Equal(true, delete)
 }
