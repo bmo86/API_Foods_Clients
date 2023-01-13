@@ -95,8 +95,12 @@ func (i *instacePostgres) GetFoods(ctx context.Context, page int64) ([]*models.F
 }
 
 func (i *instacePostgres) UpdateFood(ctx context.Context, id int64, food models.FoodUpdate) (bool, error) {
-	err := i.db.Exec("UPDATE food SET name = ?, price = ? WHERE id = ?", food.Name, food.Price, id)
-
+	data := map[string]interface{}{
+		"name":       food.Name,
+		"price":      food.Price,
+		"updated_at": food.UpdatedAt,
+	}
+	err := i.db.Table("foods").Where("id = ?", id).UpdateColumns(data)
 	if err.Error != nil {
 		return false, err.Error
 	}

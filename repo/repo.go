@@ -13,6 +13,8 @@ type RepoDatabase interface {
 	DeleteFood(ctx context.Context, id int64) (bool, error)
 	InsertIngredients(ctx context.Context, in []*models.Ingredients) error
 	GetIngredients(id int64) *models.InResIngredients
+	UpdateIngredient(in *models.Ingredients) (bool, error)
+	DeleteIngredient(id int64) (bool, error)
 }
 
 var repository RepoDatabase
@@ -49,4 +51,12 @@ func InsertIngredients(ctx context.Context, in []*models.Ingredients) error {
 
 func GetIngredients(id int64) *models.InResIngredients {
 	return repository.GetIngredients(id)
+}
+
+func DeleteIngredient(id int64) (bool, error) {
+	return repository.DeleteIngredient(id)
+}
+
+func UpdateIngredient(in *models.Ingredients) (bool, error) {
+	return repository.UpdateIngredient(in)
 }
