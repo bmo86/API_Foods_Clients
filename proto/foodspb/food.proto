@@ -75,7 +75,7 @@ message FoodResponse { Food food = 1; }
 message FoodGetResponse { ResFood food = 1; }
 
 message FoodsResponse {
-    repeated Food foods = 1;
+    repeated ResFood foods = 1;
 }
 
 message MessageResponse {

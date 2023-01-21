@@ -80,17 +80,17 @@ func (s *Servepb) GetFoods(ctx context.Context, req *foodspb.GetFoodsRequest) (*
 		return nil, err
 	}
 
-	var resFoods []*foodspb.Food
+	var resFoods []*foodspb.ResFood
 
 	for _, food := range foods {
-		f := &foodspb.Food{
-			Id:    int64(food.ID),
-			Name:  food.Name,
-			Price: float32(food.Price),
-			//Ingredients: food.Ingredients,
-			//CreatedAt: timestamppb.New(food.CreatedAt),
-			//UpdateAt:  timestamppb.New(food.UpdatedAt),
-			Status: food.Status,
+		f := &foodspb.ResFood{
+			Id:        int64(food.ID),
+			Name:      food.Name,
+			Price:     float32(food.Price),
+			Ingredi:   &foodspb.Ingre{Id: food.Ingredients.Id, Name: food.Ingredients.Name},
+			CreatedAt: timestamppb.New(food.CreatedAt),
+			UpdateAt:  timestamppb.New(food.UpdatedAt),
+			Status:    food.Status,
 		}
 		resFoods = append(resFoods, f)
 	}

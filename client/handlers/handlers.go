@@ -30,7 +30,7 @@ func HandlerCretedFood(s server.Server) gin.HandlerFunc {
 
 		if err := ctx.ShouldBind(&f); err != nil {
 			ctx.JSON(http.StatusBadRequest, gin.H{
-				"error": "Data incorrect",
+				"message": "Data incorrect",
 			})
 			return
 		}

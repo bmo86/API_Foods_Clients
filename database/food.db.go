@@ -70,24 +70,13 @@ func (i *instacePostgres) GetFood(ctx context.Context, id int64) (*models.ResFoo
 	return &food, nil
 }
 
-func (i *instacePostgres) GetFoods(ctx context.Context, page int64) ([]*models.Food, error) {
-	rows, err := i.db.Raw("SELECT id, name, price, status FROM foods OFFSET ? LIMIT ?", page, page*3).Rows()
+func (i *instacePostgres) GetFoods(ctx context.Context, page int64) ([]*models.ResFoodWithIngredients, error) {
+	offset := int(page * 2)
+	limit := int(page)
+
+	var foods []*models.ResFoodWithIngredients
+	err := i.db.Preload("Ingredients").Offset(offset).Limit(limit).Find(&foods).Error
 	if err != nil {
-		return nil, err
-	}
-
-	defer rows.Close()
-
-	var foods []*models.Food
-
-	for rows.Next() {
-		var food models.Food
-		if err := rows.Scan(&food.ID, &food.Name, &food.Price, &food.Status); err != nil {
-			foods = append(foods, &food)
-		}
-	}
-
-	if rows.Err() != nil {
 		return nil, err
 	}
 
